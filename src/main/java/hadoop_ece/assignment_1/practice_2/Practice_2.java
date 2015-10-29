@@ -5,42 +5,74 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
-import hadoop_ece.assignment_1.practice_1.Practice_1;
-import hadoop_ece.assignment_1.practice_1.Practice_1.IntSumReducer;
-import hadoop_ece.assignment_1.practice_1.Practice_1.TokenizerMapper;
 
 public class Practice_2 {
 	public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable>{
-		private Text word = new Text();
+		private IntWritable friends = new IntWritable();
+		private Text ageLvl = new Text();
 		
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			String[] itr = value.toString().split(";");
-			word.set(itr[1]);
-			context.write(word,new IntWritable(Integer.parseInt(itr[3])));
+
+			try{
+				int age = Integer.parseInt(itr[2]);
+				if (age>=0 && age<=5){
+					ageLvl.set("0-5 years");
+				}
+				else if (age>=6 && age<=12){
+					ageLvl.set("6-12 years");
+				}
+				else if (age>=13 && age<=17){
+					ageLvl.set("13-17 years");
+				}
+				else if (age>=18 && age<=25){
+					ageLvl.set("18-25 years");
+				}
+				else if (age>=26 && age<=35){
+					ageLvl.set("26-35 years");
+				}
+				else if (age>=36 && age<=45){
+					ageLvl.set("36-45 years");
+				}
+				else if (age>=46 && age<=60){
+					ageLvl.set("46-60 years");
+				}
+				else if (age>=60){
+					ageLvl.set("60+ years");
+				}
+				friends.set(Integer.parseInt(itr[4]));
+				context.write(ageLvl,friends);
+			}catch(NumberFormatException e){
+				// Cas de la première ligne
+			}
 		}
 	}
 	
-	public static class IntSumReducer extends Reducer<Text,IntWritable,Text,IntWritable> {
-		private IntWritable result = new IntWritable();
+	public static class IntSumReducer extends Reducer<Text,IntWritable,Text,FloatWritable> {
+		private FloatWritable result = new FloatWritable();
 		
 		public void reduce(Text key, Iterable<IntWritable> values,Context context) throws IOException, InterruptedException {
 			int sum = 0;
+			float avg = 0;
 			
 			for (IntWritable val : values) {
 				sum += val.get();
+				avg++;
 			}
-			
-			result.set(sum);
+			avg = sum/avg;
+			result.set(avg);
 			context.write(key, result);
 		}
 	}
