@@ -13,7 +13,7 @@ Then choose which practice you want to execute or the word count example.
 
 #### Question : Is it useful to use the reducer class as a combiner ? Justify.
 
-The combiner is run for each line but with our input file, we won't have one value twice in one line. Furthermore, the purpose of our MapReduce is to compute location wealth, so we only need the value of the second and fourth column 
+The combiner is not useful because it's run for each line but with our input file, we won't have one value twice in one line. Furthermore, the purpose of our MapReduce is to compute location wealth, so we only need the value of the second and fourth column 
 
 #### Bonus : Output is not really a CSV file but separator is ; in output file
 
