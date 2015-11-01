@@ -53,7 +53,7 @@ public class Practice_1 {
 
         // Create Conf
 		Configuration conf = new Configuration(true);
-		
+		conf.set("mapred.textoutputformat.separator", ";");
 		// Create Job
 		Job job = new Job(conf, "Practice 1");
 		job.setJarByClass(Practice_1.class);

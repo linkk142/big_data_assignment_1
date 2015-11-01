@@ -76,7 +76,8 @@ public class Main
 	     
 	            // Create configuration
 	            Configuration conf = new Configuration(true);
-	     
+	            conf.set("mapred.textoutputformat.separator", ";");
+	            
 	            // Create job
 	            Job job = new Job(conf, "WordCount");
 	            job.setJarByClass(WordCountMapper.class);
